@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Search - Mentor App</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="/assets/css/smoothproducts.css">
+</head>
+
+<body>
+<nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+    <div class="container"><a class="navbar-brand logo" href="/dashboard">Mentor App</a>
+        <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse"
+             id="navcol-1">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/search">Search</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link active" href="/search">Subjects</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="page catalog-page">
+    <section class="clean-block clean-form dark" style="border-color: rgb(88,224,40);">
+        <div style="height: 30px;"></div>
+        <div class="container">
+            <div role="alert" class="alert alert-success" th:if="${message != null}"><span><strong th:text="${message}" >Alert</strong></span></div>
+            <div role="alert" class="alert alert-danger" th:if="${error != null}"><span><strong th:text="${error}" >Alert</strong></span></div>
+            <div class="row">
+                <div class="col d-lg-flex justify-content-lg-center" style="padding: 10px">
+                    <a class="btn btn-secondary" href="/addsubject">Add a Subject</a>
+                </div>
+            </div>
+            <div class="card" th:each="subject,iter : ${subjects}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 300px;"><span th:text="${subject.getSname()}">subject name</span></th>
+                                        <th><a th:href="'/addsubtopic/'+${subject.getSubject_id()}" class="btn btn-secondary" type="button" style="width: 180px;">Add Subtopics</a></th>
+                                        <th><a th:href="'/editsubject/'+${subject.getSubject_id()}" class="btn btn-secondary" type="button" style="width: 180px;">Edit Subject Name</a></th>
+                                        <th><a th:href="'/deletesubject/'+${subject.getSubject_id()}" class="btn btn-secondary" type="button" style="width: 180px;">Delete Subject</a></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="subtopic,jter : ${subject.getSubtopics()}">
+                                        <td><span th:text="${subtopic.getName()}">subtopic name<br /></span></td>
+                                        <td></td>
+                                        <td><a th:href="'/editsubtopic/'+${subtopic.getSubtopic_id()}" class="btn btn-secondary" type="button" style="width: 180px;">Edit Topic Name</a></td>
+                                        <td><a th:href="'/deletesubtopic/'+${subtopic.getSubtopic_id()}" class="btn btn-secondary" type="button" style="width: 180px;">Delete Subtopic</a></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<footer class="page-footer dark">
+    <div class="footer-copyright">
+        <p>© 2020 OBSS Summer Internship</p>
+    </div>
+</footer>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+<script src="assets/js/smoothproducts.min.js"></script>
+<script src="assets/js/theme.js"></script>
+
+</body>
+
+</html>

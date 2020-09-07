@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Apply for Mentorship - Mentor App</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="/assets/css/smoothproducts.css">
+    <style>
+        .checkboxs-wrapper {
+            position: relative;
+        }
+        .checkboxs-wrapper input[name="radio-for-required-checkboxes"] {
+            position: absolute;
+            margin: 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            -webkit-appearance: none;
+            pointer-events: none;
+            border: none;
+            background: none;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+    <div class="container"><a class="navbar-brand logo" href="/dashboard">Mentor App</a>
+        <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse"
+             id="navcol-1">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/search">Search</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link active" href="/apply">Apply for Mentorship</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="page login-page">
+    <section class="clean-block clean-form dark" style="border-color: rgb(88,224,40);">
+        <div class="container">
+            <div role="alert" class="alert alert-success" th:if="${message != null}"><span><strong th:text="${message}" >Alert</strong></span></div>
+            <div role="alert" class="alert alert-danger" th:if="${error != null}"><span><strong th:text="${error}" >Alert</strong></span></div>
+            <div class="block-heading">
+                <h2 class="text-info">Application Form</h2>
+            </div>
+            <form method="post">
+                <div class="form-group">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="subject">Subject
+                            </label>
+                        </div>
+                        <select class="custom-select" id="subject" name="subject" required>
+                            <option>Choose a subject...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group mb-3">
+                        <div id="subtopic" class="checkboxs-wrapper">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group"><label for="bio">Bio</label><textarea class="form-control" id="bio"
+                                                                              name="bio"></textarea></div>
+                <div class="form-group">
+                    <button class="btn btn-primary btn-block" type="submit">Apply</button>
+                </div>
+            </form>
+        </div>
+        <div class="container" th:if="${applications.size() > 0}">
+            <div class="block-heading">
+                <h2 class="text-info">My Previous Applications</h2>
+            </div>
+            <div class="card" th:each="a : ${applications}">
+                <div class="card-body">
+                    <h4 class="card-title" th:text="${a.getSubject().getSname()}">Subject<br /></h4>
+                    <h6 class="text-muted card-subtitle mb-2" th:text="${#strings.listJoin(a.getKnownSubtopics(),', ')}">Subtopics</h6>
+                    <p class="card-text" th:text="${a.getBio()}">Bio</p>
+                    <h6 class="text-muted card-subtitle mb-2">Status: <span class="text-success" th:if="${a.isAccepted()}">Accepted</span><span class="text-warning" th:if="${!a.isAccepted()}">Pending</span></h6>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</main>
+<footer class="page-footer dark">
+    <div class="footer-copyright">
+        <p>© 2020 OBSS Summer Internship</p>
+    </div>
+</footer>
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+<script src="/assets/js/smoothproducts.min.js"></script>
+<script src="/assets/js/theme.js"></script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+
+        var subjects = [];
+        $.ajax({
+            url: '/api/subjects',
+            type: 'get',
+            success: function (result) {
+                subjects = result;
+                // console.log(subjects);
+                var s = '<option value="">Choose a subject...</option >';
+                for (var i = 0; i < result.length; i++) {
+                    s += '<option value="' + result[i].id + '">' + result[i].name + '</option>';
+                }
+                $('#subject').html(s);
+            }
+        });
+
+        $('#subject').on('change', function () {
+            var subId = $(this).val();
+            if (!subId){
+                $('#subtopic').html('');
+                return;
+            }
+            for (var i = 0; i < subjects.length; i++) {
+                if (subjects[i].id == subId) {
+                    var result = subjects[i].subtopics;
+                    var s = '<h5>Subtopics</h5>' + '<input id="radio-for-checkboxes" type="radio" name="radio-for-required-checkboxes" required/>';
+                    for (var j = 0; j < result.length; j++) {
+                        var subtopic = result[j];
+                        s += '<div class="form-check"><input type="checkbox" class="form-check-input" id="formCheck-' + j + '" name="subtopics" value="' + subtopic.subtopic_id + '"/><label class="form-check-label" for="formCheck-' + j + '">' + subtopic.subtopic_name + '</label></div>';
+                    }
+
+                    $('#subtopic').html(s);
+
+
+                    break;
+                }
+            }
+
+            $('.form-check-input').on('change', function(){
+                var inputs = $('[name="subtopics"]');
+                var flag = false;
+                for (i=0; i<inputs.length; i++){
+                    if (inputs[i].checked){
+                        flag = true;
+                        break;
+                    }
+                }
+                $('#radio-for-checkboxes').attr('checked', flag);
+            });
+        });
+
+
+
+    });
+</script>
+</body>
+
+</html>

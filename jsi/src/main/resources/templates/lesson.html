@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Lesson - Mentor App</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="/assets/css/smoothproducts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+<nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+    <div class="container"><a class="navbar-brand logo" href="/dashboard">Mentor App</a>
+        <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse"
+             id="navcol-1">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item" role="presentation"><a class="nav-link active" href="/dashboard">Dashboard</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/search">Search</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/apply">Apply for MentorshIp</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">Log out</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="page login-page" >
+    <section class="clean-block clean-form dark">
+        <div style="height: 30px"></div>
+        <div class="container" sec:authorize="hasAnyRole('ROLE_USERS', 'ROLE_USER')">
+            <div class="container">
+                <ul class="list-group" id="lesson">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col">
+                                <div class="card" style="border-width: 0px;">
+                                    <div class="card-body">
+                                        <h3 class="d-lg-flex justify-content-lg-center card-title"
+                                            th:text="'Mentor: ' + ${lesson.getMentor().getUsername()}"></h3>
+                                        <h3 class="d-lg-flex justify-content-lg-center card-title"
+                                            th:text="'Mentee: ' + ${lesson.getMentee().getUsername()}"></h3>
+                                        <div style="height: 10px;"></div>
+                                        <h4 class="text-muted d-lg-flex justify-content-lg-center card-subtitle mb-2"
+                                            th:text="'Subject: ' + ${lesson.getSubject().getSname()}"></h4>
+                                        <h4 class="text-muted d-lg-flex justify-content-lg-center card-subtitle mb-2"
+                                            th:text="'Start Date: ' + ${#dates.format(lesson.getStart_datetime(),'dd-MM-yyyy')}"></h4>
+                                        <h4 class="text-muted d-lg-flex justify-content-lg-center card-subtitle mb-2">
+                                            Status:
+                                            <span th:if="${lesson.getStatus() == 0}">New</span>
+                                            <span th:if="${lesson.getStatus() == 1 && lesson.getPhase_no() == 0}">Not Started</span>
+                                            <span th:if="${lesson.getStatus() == 1 && lesson.getPhase_no() != 0}">Ongoing</span>
+                                            <span th:if="${lesson.getStatus() == 2}">Completed</span>
+                                        </h4>
+                                        <div class="d-md-flex justify-content-md-center" th:if="${lesson.getStatus() == 0}">
+                                            <a class="btn btn-secondary" type="button" th:href="'/plan/'+${lesson.getLesson_id()}">Plan this Course</a>
+                                        </div>
+                                        <div class="d-md-flex justify-content-md-center" th:if="${lesson.getPhase_no() == 0 && lesson.getStatus() == 1}">
+                                            <a class="btn btn-primary" type="button" th:href="'/lesson/start/'+${lesson.getLesson_id()}">Start Course</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <div style="height: 200px" th:if="${lesson.getStatus() == 0}"></div>
+                    <li class="list-group-item" th:if="${lesson.getStatus() > 0}" th:each="phase,iter : ${lesson.getPhases()}">
+                        <div class="row">
+                            <div class="col d-md-flex justify-content-md-center align-items-md-center">
+                                <h4 style="margin: 0px 0px 0px 0px;padding: 12px 20px;" th:text="${phase.getPhase_name()}"></h4>
+                            </div>
+                            <div class="col d-md-flex justify-content-md-center align-items-md-center">
+                                <h6 style="margin: 0px 0px 0px 0px;padding: 12px 20px;" >
+                                    End date and time:
+                                    <br>
+                                    <span th:text="${#dates.format(phase.getEnd_datetime(),'dd-MM-yyyy HH:mm')}"></span>
+                                </h6>
+                            </div>
+                            <div class="col d-md-flex justify-content-md-center align-items-md-center" th:if="${lesson.phase_no < phase.getPhase_no()}">
+                                <div role="alert" class="alert alert-success"
+                                     style="width: 100%;margin: 16px 0px 16px 0px;background-color: rgb(217,217,217);">
+                                    <span class="d-md-flex justify-content-md-center"
+                                          style="color: rgb(81,81,81);"><strong>Not Started</strong></span>
+                                </div>
+                            </div>
+                            <div class="col d-md-flex justify-content-md-center align-items-md-center" th:if="${lesson.phase_no == phase.getPhase_no()}">
+                                <a class="btn btn-success d-md-flex justify-content-md-center" type="button"
+                                   th:href="'/review/'+${lesson.getLesson_id()}+'/'+${phase.getPhase_no()}" style="margin: 10px 0px 10px 0px;width: 100%;">Complete Phase
+                                </a>
+                            </div>
+                            <div class="col d-md-flex justify-content-md-center align-items-md-center" th:if="${lesson.phase_no > phase.getPhase_no()}">
+                                <div role="alert" class="alert alert-success"
+                                     style="width: 100%;margin: 16px 0px 16px 0px;" th:with="isReviewable=${(isMentee && phase.getMentee_stars() == 0) || (!isMentee && phase.getMentor_stars() == 0)}">
+                                        <span th:if="${!isReviewable}" class="d-md-flex justify-content-md-center"><strong>Completed</strong>
+                                        </span>
+                                    <a th:if="${isReviewable}"
+                                            class="btn btn-warning d-md-flex justify-content-md-center" type="button"
+                                       th:href="'/review/'+${lesson.getLesson_id()}+'/'+${phase.getPhase_no()}" style="margin: 10px 0px 10px 0px;width: 100%;">Add Review to Complete
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                        <ul class="list-group" th:if="${(phase.getMentee_stars() != 0) || (phase.getMentor_stars() != 0)}">
+                            <li class="list-group-item" th:if="${(phase.getMentor_stars() != 0)}">
+                                <div class="row">
+                                    <div class="col" width="50%">
+                                        <span>Mentor Review</span>
+                                        <div th:with="filled=${phase.getMentor_stars()}">
+                                            <span class="fa fa-star" style="color: orange;" th:each="i : ${#numbers.sequence(1,filled, 1)}"></span><span class="fa fa-star" th:if="${filled < 5}" th:each="i : ${#numbers.sequence(1,(5 - filled), 1)}"></span>
+                                        </div>
+                                        <p th:text="'&quot;'+${phase.getMentor_review() }+'&quot;' "></p>
+                                    </div>
+                                    <div class="col d-md-flex justify-content-md-center align-items-md-center" th:if="${!isMentee}">
+                                            <a class="btn btn-secondary" type="button" th:href="'/editreview/'+${lesson.getLesson_id()}+'/'+${phase.getPhase_no()}">Edit Review</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item" th:if="${(phase.getMentee_stars() != 0)}">
+                                <div class="row">
+                                    <div class="col">
+                                        <span>Mentee Review </span>
+                                        <div th:with="filled=${phase.getMentee_stars()}">
+                                            <span class="fa fa-star" style="color: orange;" th:each="i : ${#numbers.sequence(1, filled, 1)}"></span><span class="fa fa-star" th:if="${filled < 5}" th:each="i : ${#numbers.sequence(1,(5 - filled), 1)}"></span>
+                                        </div>
+                                        <p th:text="'&quot;'+${phase.getMentee_review() }+'&quot;' " ></p>
+                                    </div>
+                                    <div class="col d-md-flex justify-content-md-center align-items-md-center" th:if="${isMentee}">
+                                            <a class="btn btn-secondary" type="button" th:href="'/editreview/'+${lesson.getLesson_id()}+'/'+${phase.getPhase_no()}">Edit Review</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <div style="height: 100px" th:if="${lesson.getStatus() == 1}"></div>
+                </ul>
+            </div>
+        </div>
+    </section>
+</main>
+<footer class="page-footer dark">
+    <div class="footer-copyright">
+        <p>© 2020 OBSS Summer Internship</p>
+    </div>
+</footer>
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+<script src="/assets/js/smoothproducts.min.js"></script>
+<script src="/assets/js/theme.js"></script>
+
+</body>
+
+</html>

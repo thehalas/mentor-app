@@ -1,0 +1,21 @@
+these are just for reminding and not used anywhere.
+to edit users please change the ldif file and change the user table too.
+
+admin
+adminpassword
+
+admin2
+admin2password
+
+bob
+bobspassword
+
+john
+johnspassword
+
+annie
+anniespassword
+
+mary
+maryspassword
+

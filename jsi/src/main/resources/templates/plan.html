@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Lesson - Mentor App</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="/assets/css/smoothproducts.css">
+</head>
+
+<body>
+<nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+    <div class="container"><a class="navbar-brand logo" href="/dashboard">Mentor App</a><button data-toggle="collapse" data-target="#navcol-1" class="navbar-toggler"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse"
+             id="navcol-1">
+            <ul class="nav navbar-nav ml-auto">
+                <li role="presentation" class="nav-item"><a class="nav-link active" href="/dashboard">Dashboard</a></li>
+                <li role="presentation" class="nav-item"><a class="nav-link" href="/search">Search</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/apply">Apply for MentorshIp</a></li>
+                <li role="presentation" class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="page login-page">
+    <section class="clean-block clean-form dark" style="border-color: rgb(88,224,40);">
+        <div style="height: 30px;"></div>
+        <div class="container">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card" style="border-width: 0px;">
+                                <div class="card-body">
+                                    <h3 class="d-md-flex d-lg-flex justify-content-md-center justify-content-lg-center card-title" th:text="'Mentor: '+${lesson.getMentor().getUsername()}">Mentor: Annie</h3>
+                                    <h3 class="d-md-flex d-lg-flex justify-content-md-center justify-content-lg-center card-title" th:text="'Mentee: '+${lesson.getMentee().getUsername()}">Mentee: Annie</h3>
+                                    <h4 class="text-muted d-md-flex d-lg-flex justify-content-md-center justify-content-lg-center card-subtitle mb-2" style="margin: 0px 0px 8px;" th:text="'Subject: '+${lesson.getSubject().getSname()}">Subject: Gardening </h4>
+
+                                </div>
+                                <form method="post">
+                                    <h4 class="d-lg-flex justify-content-lg-center">Add Phase</h4>
+                                    <div class="form-group"><label>Phase name</label><input type="text" class="form-control" name="phase_name" required/></div>
+                                    <div class="form-group"><label>Phase end date and time</label><input class="form-control" type="datetime-local" name="end_date_time" required/></div>
+                                    <div class="form-group d-lg-flex justify-content-lg-center"><input class="btn btn-secondary" type="submit" value="Add Phase"></input></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item" th:each="phase,iter : ${lesson.getPhases()}">
+                    <div class="row">
+                        <div class="col d-md-flex justify-content-md-center align-items-md-center">
+                            <h4 style="margin: 0px 0px 0px 0px;padding: 12px 20px;" th:text="${phase.getPhase_name()}">Introduction</h4>
+                        </div>
+                        <div class="col d-md-flex justify-content-md-center align-items-md-center">
+                            <h6 style="margin: 0px 0px 0px 0px;padding: 12px 20px;">
+                                End Date and Time:
+                                <br>
+                                <span th:text="${#dates.format(phase.getEnd_datetime(),'dd-MM-yyyy HH:mm')}"></span>
+                            </h6>
+                        </div>
+                        <div class="col d-md-flex justify-content-md-center align-items-md-center">
+                            <a class="btn btn-secondary" type="button" th:href="'/editphase/'+${lesson.getLesson_id()}+'/'+${phase.getPhase_no()}">Edit Phase</a>
+                            <div style="width: 10px; height: 5px;"></div>
+                            <a class="btn btn-secondary" type="button" th:href="'/deletephase/'+${lesson.getLesson_id()}+'/'+${phase.getPhase_no()}">Delete Phase</a>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item" th:if="${lesson.getPhases().size() > 0}">
+                    <div class="form-group d-lg-flex justify-content-lg-center">
+                        <a class="btn btn-secondary" type="button" th:href="'/plan/complete/'+${lesson.getLesson_id()}">Complete Planning</a></div>
+                </li>
+            </ul>
+        </div>
+    </section>
+</main>
+<footer class="page-footer dark">
+    <div class="footer-copyright">
+        <p>© 2020 OBSS Summer Internship</p>
+    </div>
+</footer>
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+<script src="/assets/js/smoothproducts.min.js"></script>
+<script src="/assets/js/theme.js"></script>
+</body>
+
+</html>

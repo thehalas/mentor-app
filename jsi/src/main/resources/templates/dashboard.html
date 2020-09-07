@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Dashboard - Mentor App</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="/assets/css/smoothproducts.css">
+</head>
+
+<body>
+<nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+    <div class="container"><a class="navbar-brand logo" href="#">Mentor App</a>
+        <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse"
+             id="navcol-1">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item" role="presentation"><a class="nav-link active" href="/dashboard#">Dashboard</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/search">Search</a></li>
+                <li class="nav-item" role="presentation" sec:authorize="hasAnyRole('ROLE_USERS', 'ROLE_USER')"><a class="nav-link" href="/apply">Apply for Mentorship</a></li>
+                <li class="nav-item" role="presentation" sec:authorize="hasRole('ROLE_ADMINS')"><a class="nav-link" href="/subjects">Subjects</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">Log out</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="page login-page" style="min-height: 100vh;overflow: hidden;display: block;position: relative;">
+    <section class="clean-block clean-form dark">
+        <div class="alert alert-success" role="alert" style="text-align: center;">Welcome <span th:text="${user_name}"></span></div>
+        <div role="alert" class="alert alert-success" style="text-align: center;" th:if="${message != null}"><span><strong th:text="${message}" >Alert</strong></span></div>
+        <div role="alert" class="alert alert-danger" style="text-align: center;" th:if="${error != null}"><span><strong th:text="${error}" >Alert</strong></span></div>
+        <div class="container" sec:authorize="hasAnyRole('ROLE_USERS', 'ROLE_USER')" id="my-mentors" th:if="${my_mentors.size() != 0}">
+            <div class="block-heading">
+                <h2 class="text-info">My Mentors</h2>
+            </div>
+            <div class="card"  th:each="lesson : ${my_mentors}">
+                <div class="card-body">
+                    <h4 class="card-title" th:text="${lesson.getMentor().getUsername()}"></h4>
+                    <div class="bg-dark"></div>
+                    <h6 class="text-muted card-subtitle mb-2" th:text="'Subject: '+${lesson.getSubject()}"></h6>
+                    <h6 class="text-muted card-subtitle mb-2">
+                        Status:
+                        <span th:if="${lesson.getStatus() == 0}">New</span>
+                        <span th:if="${lesson.getStatus() == 1 && lesson.getPhase_no() == 0}">Not Started</span>
+                        <span th:if="${lesson.getStatus() == 1 && lesson.getPhase_no() != 0}">Ongoing</span>
+                        <span th:if="${lesson.getStatus() == 2}">Completed</span>
+                    </h6>
+                    <a class="stretched-link" th:href="'/lesson/'+${lesson.getLesson_id()}"></a>
+                </div>
+            </div>
+        </div>
+        <div class="container" sec:authorize="hasAnyRole('ROLE_USERS', 'ROLE_USER')" id="my-mentees"  th:if="${my_mentees.size() != 0}">
+            <div class="block-heading">
+                <h2 class="text-info">My Mentees</h2>
+            </div>
+            <div class="card" th:each="lesson : ${my_mentees}">
+                <div class="card-body">
+                    <h4 class="card-title" th:text="${lesson.getMentee().getUsername()}"></h4>
+                    <div class="bg-dark"></div>
+                    <h6 class="text-muted card-subtitle mb-2" th:text="'Subject: '+${lesson.getSubject()}"></h6>
+                    <h6 class="text-muted card-subtitle mb-2">
+                        Status:
+                        <span th:if="${lesson.getStatus() == 0}">New</span>
+                        <span th:if="${lesson.getStatus() == 1 && lesson.getPhase_no() == 0}">Not Started</span>
+                        <span th:if="${lesson.getStatus() == 1 && lesson.getPhase_no() != 0}">Ongoing</span>
+                        <span th:if="${lesson.getStatus() == 2}">Completed</span>
+                    </h6>
+                    <a class="stretched-link" th:href="'/lesson/'+${lesson.getLesson_id()}"></a>
+                </div>
+            </div>
+        </div>
+        <div class="container" sec:authorize="hasAnyRole('ROLE_USERS', 'ROLE_USER')" th:if="${my_mentors.size() == 0 && my_mentees.size() == 0}" style="text-align: center;">
+            <span >
+                You have no mentorships at the moment. <br>You can find mentors at the
+                <a href="/search">search</a>
+                page. <br>You can be a mentor too, <a href="/apply">apply now</a> if you haven't already.</span>
+        </div>
+        <div class="container" sec:authorize="hasRole('ROLE_ADMINS')" id="applications">
+            <div class="block-heading">
+                <h2 class="text-info">Mentorship Applications</h2>
+            </div>
+            <div th:if="${pen_app.size() == 0}" style="text-align: center;">There are no mentorship applications at the moment</div>
+            <div class="card" th:each="pa,iter : ${pen_app}">
+                <div class="card-body">
+                    <h4 class="card-title" th:text="${pa.getMentor().getUsername()}"></h4>
+                    <h6 class="text-muted card-subtitle mb-2" th:text="${pa.getSubject().getSname()}"></h6>
+                    <h6 class="text-muted card-subtitle mb-2"
+                        th:text="${#strings.listJoin(pa.getKnownSubtopics(),', ')}"></h6>
+                    <div>
+                        <a class="btn btn-link bg-white border-white shadow-none d-md-flex justify-content-md-center"
+                           data-toggle="collapse" aria-expanded="false" th:aria-controls="'collapse-' + ${iter.index}"
+                           th:href="'#collapse-' + ${iter.index}" role="button">Details <br/></a>
+                        <div class="collapse" th:id="'collapse-' + ${iter.index}" data-parent="#applications">
+                            <p class="card-text" th:text="${pa.getBio()}"></p>
+                            <div class="row">
+                                <div class="col d-md-flex justify-content-md-center"><a class="btn btn-primary"
+                                                                                        type="button"
+                                                                                        th:href="'/dashboard/accept/' + ${pa.getKnow_id()}"
+                                                                                        style="width: 202px;background-color: rgb(88,224,40);border-color: rgb(88,224,40);">Accept</a>
+                                </div>
+                                <div class="col d-md-flex justify-content-md-center"><a class="btn btn-primary"
+                                                                                        type="button"
+                                                                                        th:href="'/dashboard/reject/' + ${pa.getKnow_id()}"
+                                                                                        style="width: 202px;background-color: rgb(224,40,40);border-color: rgb(224,40,40);">Reject</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 250px" th:if="${pen_app.size() <= 1}"></div>
+        </div>
+        <div class="container" style="height: 250px;" th:if="${my_mentors != null && my_mentors.size() == 0}"></div>
+        <div class="container" style="height: 250px;" th:if="${my_mentees != null && my_mentees.size() == 0}"></div>
+    </section>
+</main>
+<footer class="page-footer dark">
+    <div class="footer-copyright">
+        <p>© 2020 OBSS Summer Internship</p>
+    </div>
+</footer>
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+<script src="/assets/js/smoothproducts.min.js"></script>
+<script src="/assets/js/theme.js"></script>
+</body>
+
+</html>

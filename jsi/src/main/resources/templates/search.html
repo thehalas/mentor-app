@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Search - Mentor App</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="/assets/css/smoothproducts.css">
+</head>
+
+<body>
+<nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+    <div class="container"><a class="navbar-brand logo" href="/dashboard">Mentor App</a>
+        <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse"
+             id="navcol-1">
+            <ul class="nav navbar-nav ml-auto">
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link active" href="/search">Search</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/apply">Apply for MentorshIp</a></li>
+                <li class="nav-item" role="presentation" sec:authorize="hasRole('ROLE_ADMINS')"><a class="nav-link" href="/subjects">Subjects</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="page catalog-page">
+    <section class="clean-block clean-catalog dark">
+        <div class="container">
+            <div role="alert" class="alert alert-success" th:if="${message != null}"><span><strong th:text="${message}" >Alert</strong></span></div>
+            <div role="alert" class="alert alert-danger" th:if="${error != null}"><span><strong th:text="${error}" >Alert</strong></span></div>
+            <div class="block-heading">
+                <h2 class="text-info">Find a mentor</h2>
+                <p>Pick a subject with or without subtopics and click the search button. Or you can search without choosing anything too.</p>
+            </div>
+            <div class="content">
+                <form method="get">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="d-none d-md-block">
+                                <div class="filters">
+                                    <div class="filter-item">
+                                        <form>
+                                            <div class="input-group" style="margin: 0px 10px 10px 0px">
+                                                <div class="input-group-prepend"></div>
+                                                <input type="search" class="form-control" name="query" th:value="${query_string}" />
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-light" type="submit"><i class="fa fa-search"></i></button>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <h3>Subject</h3>
+                                                <select class="custom-select" id="subject-hidden" name="subject">
+                                                    <option selected value="0">...</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group" id="subtopics-hidden">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-md-none"><a class="btn btn-link d-md-none filter-collapse"
+                                                      data-toggle="collapse" aria-expanded="false"
+                                                      aria-controls="filters" href="#filters" role="button">Filters<i
+                                    class="icon-arrow-down filter-caret"></i></a>
+                                <div class="collapse" id="filters">
+                                    <div class="filters">
+                                        <div class="filter-item">
+                                            <form>
+                                                <div class="form-group">
+                                                    <h3>Choose a subject</h3>
+                                                    <select class="custom-select" id="subject" name="subject">
+                                                        <option selected>...</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group" id="subtopics">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="products">
+                                <div class="row no-gutters" th:if="${results.size() > 0}" th:each="k,iter : ${results}">
+                                    <div class="col">
+                                        <div class="clean-product-item">
+                                            <div class="card" style="border-width: 0px;">
+                                                <div class="card-body" th:with="is_available_by_mentor=${know_available_by_mentor.get(k)},is_available_by_subject=${know_available_by_subject.get(k)}">
+                                                    <h3 class="d-lg-flex justify-content-lg-center card-title"
+                                                        th:text="${k.getMentor().getUsername()}">Mentor: XXXXX</h3>
+                                                    <div class="bg-dark"></div>
+                                                    <h4 class="text-muted d-lg-flex justify-content-lg-center card-subtitle mb-2"
+                                                        th:text="${k.getSubject().getSname()}"
+                                                        style="margin: 0px 0px 8px;">Subject: ZZZZZZ&nbsp;</h4>
+                                                    <h4 class="text-muted d-lg-flex justify-content-lg-center card-subtitle mb-2"
+                                                        th:text="${#strings.listJoin(k.getKnownSubtopics(),', ')}">
+                                                        Subtopics: AAAAAAA&nbsp;</h4>
+                                                    <h4 class="text-muted d-lg-flex justify-content-lg-center card-subtitle mb-2"
+                                                        th:text="'&quot;'+${ k.getBio() }+'&quot;' ">Bio: AAAAAAA&nbsp;</h4>
+                                                    <div class="d-md-flex justify-content-md-center"
+                                                         th:if="${is_available_by_mentor && is_available_by_subject && !user.equals(k.getMentor())}"
+                                                         sec:authorize="hasAnyRole('ROLE_USERS', 'ROLE_USER')">
+                                                        <a class="btn btn-secondary " type="button" th:href="'/pickmentorship/'+${k.getKnow_id()}">Take This Mentorship</a>
+                                                    </div>
+                                                    <div class="d-md-flex justify-content-md-center" th:if="${!is_available_by_mentor}">
+                                                        <span class="text-danger">This mentor is already doing two mentorships.</span><br>
+                                                    </div>
+                                                    <div class="d-md-flex justify-content-md-center" th:if="${!is_available_by_subject}">
+                                                        <span class="text-danger">You are already taking mentorship in this subject.</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <nav th:if="${results.size() > 0}">
+                                    <ul class="pagination">
+                                        <li class="page-item" th:if="${this_page != 1}" th:each="i : ${#numbers.sequence(1,this_page - 1,1)}">
+                                            <input class="page-link" type="submit" name="page" th:value="${i}"/>
+                                        </li>
+                                        <li class="page-item active">
+                                            <a class="page-link" href="#" th:text="${this_page}"></a>
+                                        </li>
+                                        <li class="page-item" th:if="${this_page < total_pages}" th:each="i : ${#numbers.sequence(this_page + 1,total_pages,1)}">
+                                            <input class="page-link" type="submit" name="page" th:value="${i}"/>
+                                        </li>
+                                    </ul>
+                                </nav>
+                                <p th:if="${results.size() == 0}">Nothing found</p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+<footer class="page-footer dark">
+    <div class="footer-copyright">
+        <p>© 2020 OBSS Summer Internship</p>
+    </div>
+</footer>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+<script src="assets/js/smoothproducts.min.js"></script>
+<script src="assets/js/theme.js"></script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        var checked_subject = [[${checked_subject}]];
+        var checked_subtopics = [[${checked_subtopics}]];
+        var subjects = [];
+
+        $.ajax({
+            url: '/api/subjects',
+            type: 'get',
+            success: function (result) {
+                subjects = result;
+                // console.log(subjects);
+                var s = '<option value="0" >...</option >';
+                for (var i = 0; i < result.length; i++) {
+                    s += '<option value="' + result[i].id + '"';
+                    if (result[i].id == checked_subject){
+                        s += ' selected ';
+                    }
+                    s += '>' + result[i].name + '</option>';
+                }
+                $('#subject').html(s);
+                $('#subject-hidden').html(s);
+                $('#subject').trigger('change');
+            }
+        });
+
+        $('#subject,#subject-hidden').on('change', function () {
+            var subId = $(this).val();
+            if (subId == 0) {
+                $('#subtopics').html('');
+                $('#subtopics-hidden').html('');
+                return;
+            }
+            for (var i = 0; i < subjects.length; i++) {
+                if (subjects[i].id == subId) {
+                    var result = subjects[i].subtopics;
+                    var s = '<h5>Subtopics</h5>';
+                    for (var j = 0; j < result.length; j++) {
+                        var subtopic = result[j];
+                        s += '<div class="form-check"><input type="checkbox" class="form-check-input" name="subtopics" ';
+                        if (checked_subtopics.includes(subtopic.subtopic_id)){
+                            s += ' checked ';
+                        }
+                        s += 'id="formCheck-' + j + '" value="' + subtopic.subtopic_id + '"/><label class="form-check-label" for="formCheck-' + j + '">' + subtopic.subtopic_name + '</label></div>\n';
+                    }
+                    $('#subtopics').html(s);
+                    $('#subtopics-hidden').html(s);
+                    break;
+                }
+            }
+        });
+
+    });
+</script>
+
+</body>
+
+</html>

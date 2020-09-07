@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Lesson - Mentor App</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css">
+    <link rel="stylesheet" href="/assets/css/smoothproducts.css">
+    <link rel="stylesheet" href="/assets/css/star-rating.css">
+</head>
+
+<body>
+<nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
+    <div class="container"><a class="navbar-brand logo" href="/dashboard">Mentor App</a>
+        <button data-toggle="collapse" data-target="#navcol-1" class="navbar-toggler"><span class="sr-only">Toggle navigation</span><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse"
+             id="navcol-1">
+            <ul class="nav navbar-nav ml-auto">
+                <li role="presentation" class="nav-item"><a class="nav-link active" href="/dashboard">Dashboard</a></li>
+                <li role="presentation" class="nav-item"><a class="nav-link active" href="/search">Search</a></li>
+                <li class="nav-item" role="presentation"><a class="nav-link" href="/apply">Apply for MentorshIp</a></li>
+                <li role="presentation" class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<main class="page login-page">
+    <section class="clean-block clean-form dark" style="border-color: rgb(88,224,40);">
+        <div style="height: 30px;"></div>
+        <div class="container">
+            <form method="post">
+                <h4 class="d-lg-flex justify-content-lg-center">Phase Evaluation</h4>
+                <div class="form-group">
+                    <label class="d-lg-flex justify-content-lg-center">Rating</label>
+                    <div class="rating" id="stars">
+                        <span><input type="radio" name="rating" id="str5" value="5"><label for="str5">☆</label></span>
+                        <span><input type="radio" name="rating" id="str4" value="4"><label for="str4">☆</label></span>
+                        <span><input type="radio" name="rating" id="str3" value="3" required><label for="str3">☆</label></span>
+                        <span><input type="radio" name="rating" id="str2" value="2"><label for="str2">☆</label></span>
+                        <span><input type="radio" name="rating" id="str1" value="1"><label for="str1">☆</label></span>
+                    </div>
+                    <br>
+                </div>
+                <div class="form-group">
+                    <label class="d-lg-flex justify-content-lg-center" for="review">Review</label>
+                    <textarea class="form-control" name="review" id="review" th:text="${prev_review}" maxlength="500"></textarea>
+                </div>
+                <div class="form-group d-lg-flex justify-content-lg-center">
+                    <button class="btn btn-secondary" type="submit">Save Evaluation</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+<footer class="page-footer dark">
+    <div class="footer-copyright">
+        <p>© 2020 OBSS Summer Internship</p>
+    </div>
+</footer>
+<script src="/assets/js/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.js"></script>
+<script src="/assets/js/smoothproducts.min.js"></script>
+<script src="/assets/js/theme.js"></script>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        // Check Radio-box
+        $(".rating input:radio").attr("checked", false);
+
+        $('.rating input').click(function () {
+            $(".rating span").removeClass('checked');
+            $(this).parent().addClass('checked');
+        });
+
+        $('input:radio').change(
+            function () {
+                var userRating = this.value;
+            });
+
+        var prev_stars = '[[${prev_stars}]]';
+
+        if (prev_stars) {
+            $('#str'+prev_stars).click();
+        }
+    });
+</script>
+</body>
+
+</html>

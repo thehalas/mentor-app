@@ -1,0 +1,50 @@
+app:
+  datasource:
+    jdbc-url: jdbc:mysql://localhost:3306/obss
+    username: root
+    password: password
+    pool-size: 30
+
+spring:
+
+  ldap:
+    embedded:
+      ldif: classpath:test-server.ldif
+      port: 8389
+      base-dn: dc=springframework,dc=org
+
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: xxx.com
+            client-secret: xxx
+
+  data:
+    elasticsearch:
+      cluster-name: my-application
+      cluster-nodes: localhost:9300
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: xxx@gmail.com
+    password: xxx
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+#  jpa:
+#
+#    show-sql: true
+#
+#    properties:
+#      hibernate:
+#        format_sql: true

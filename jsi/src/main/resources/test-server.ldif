@@ -1,0 +1,93 @@
+dn: dc=springframework,dc=org
+objectclass: top
+objectclass: domain
+objectclass: extensibleObject
+dc: springframework
+
+dn: ou=groups,dc=springframework,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: groups
+
+dn: ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: organizationalUnit
+ou: people
+
+dn: uid=admin,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Muhammed Halas
+sn: Halas
+uid: admin
+userPassword: $2y$10$PSPRaorWzNqVJoUjqCNH0erj0giFlX12KEEM0tYjhQLGUH4.qYvdu
+
+dn: uid=admin2,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: admin2 something
+sn: something
+uid: admin2
+userPassword: $2y$10$7oyB0vVzpYH.49rPcjHh9easJeDGim2fBX2A6DdNhxkXKTYflvd8G
+
+dn: uid=bob,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Bob Marley
+sn: Marley
+uid: bob
+userPassword: $2y$10$3Qe6FNBYe2moyEwpsCZMGOwcv2pDeI0MxTbA5pCk9n9wBQ9Hbj4cG
+
+dn: uid=john,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: John Lennon
+sn: Lennon
+uid: john
+userPassword: $2y$10$JCk4HjfaR5cPJpDxxK1cIuju81gIznAnHg7A0xlrTzC5OcqOIg73y
+
+dn: uid=mary,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Mary Poppins
+sn: Poppins
+uid: mary
+userPassword: $2y$10$YsWTIn24zkSBSFGpjOxw.uvVTke9T4OxfRg6MrhwDMbXC.ApizN0.
+
+dn: uid=annie,ou=people,dc=springframework,dc=org
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: Annie Edison
+sn: Edison
+uid: annie
+userPassword: $2y$10$ge4.erj.lUiIaFxEq9NfLuOP8QBKWbAWejuXW.YKFcD2f6PQrg2Ri
+
+dn: cn=admins,ou=groups,dc=springframework,dc=org
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: admins
+ou: admin
+uniqueMember: uid=admin,ou=people,dc=springframework,dc=org
+uniqueMember: uid=admin2,ou=people,dc=springframework,dc=org
+
+dn: cn=users,ou=groups,dc=springframework,dc=org
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: users
+ou: user
+uniqueMember: uid=bob,ou=people,dc=springframework,dc=org
+uniqueMember: uid=john,ou=people,dc=springframework,dc=org
+uniqueMember: uid=annie,ou=people,dc=springframework,dc=org
+uniqueMember: uid=mary,ou=people,dc=springframework,dc=org
